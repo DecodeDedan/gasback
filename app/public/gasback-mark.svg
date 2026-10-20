@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Gasback">
+  <title>Gasback</title>
+  
+  <path d="M47.32 19.14 A20 20 0 1 0 44.31 47.76" fill="none" stroke="#EEEBE5" stroke-width="7" stroke-linecap="round"/>
+  <path d="M52.19 41.60 L48.31 52.88 L40.31 42.64 Z" fill="#F5B53D"/>
+  <rect x="26" y="26" width="12" height="12" rx="2" fill="#F5B53D"/>
+</svg>

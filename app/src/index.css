@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Sans:wght@400;600&display=swap');
+@import './styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-text);
+  background-color: var(--page);
+  /* A soft warm light from the top of the page; no grid, no boxes. */
+  background-image: radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in oklab, var(--accent) 7%, transparent), transparent 70%);
+  background-attachment: fixed;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: var(--tracking-2xl);
+}
+
+.font-mono,
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Small uppercase mono label with a status dot, as on Centscan. */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.kicker::before {
+  content: "";
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+}
+
+@layer components {
+  /* Soft panel: no hard box, a warm hairline that fades in from the top edge. */
+  .panel {
+    position: relative;
+    border-radius: 24px;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--surface) 92%, var(--accent) 8%) 0%, var(--surface) 38%);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, var(--accent) 22%, transparent), inset 0 0 0 1px color-mix(in oklab, var(--divider) 70%, transparent);
+  }
+
+  /* Pump faceplate: the inset display window every money readout sits in. */
+  .pump {
+    border-radius: 18px;
+    background: radial-gradient(120% 140% at 50% 0%, color-mix(in oklab, var(--accent) 7%, var(--page)) 0%, var(--page) 70%);
+    box-shadow: inset 0 2px 10px rgb(0 0 0 / 0.55), inset 0 0 0 1px color-mix(in oklab, var(--divider) 80%, transparent);
+  }
+
+  .field {
+    width: 100%;
+    min-height: 2.75rem;
+    padding-inline: var(--space-4);
+    border-radius: 14px;
+    background: var(--page);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  .field:hover { border-color: var(--border-strong); }
+  .field:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--accent); }
+
+  .btn-gas,
+  .btn-line {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 3rem;
+    padding-inline: var(--space-6);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    transition: background-color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+  }
+  .btn-gas { background: var(--accent); color: var(--accent-fg); }
+  .btn-gas:hover:not(:disabled) { background: var(--accent-hover); }
+  .btn-line { border: 1px solid var(--border); color: var(--text); }
+  .btn-line:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .btn-gas:active:not(:disabled),
+  .btn-line:active:not(:disabled) { transform: scale(0.98); }
+  .btn-gas:disabled,
+  .btn-line:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent-subtle);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ConnectKit theme, from the same tokens. */
+:root {
+  --ck-font-family: var(--font-text);
+  --ck-body-background: var(--raised);
+  --ck-body-color: var(--text);
+  --ck-primary-button-background: var(--accent);
+  --ck-primary-button-color: var(--accent-fg);
+  --ck-border-radius: var(--radius-lg);
+  --ck-overlay-background: rgb(17 15 12 / 0.85);
+}
+
+/* Room for the phone tab bar. */
+@media (max-width: 639px) {
+  body { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+}
+
+/* Keep Arc Studio's badge above the phone tab bar. */
+@media (max-width: 639px) {
+  .studio-badge { bottom: calc(5.75rem + env(safe-area-inset-bottom)) !important; }
+}

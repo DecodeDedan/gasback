@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/rpc/arc-testnet",
+      "destination": "https://rpc.testnet.arc.io/"
+    },
+    {
+      "source": "/rpc/arc-mainnet",
+      "destination": "https://rpc.mainnet.arc.io/"
+    },
+    {
+      "source": "/((?!rpc/|brand/|assets/|favicon.svg|gasback-mark.svg).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

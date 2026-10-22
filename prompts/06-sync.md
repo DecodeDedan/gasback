@@ -6,9 +6,15 @@ What changed:
 - UI system: a "gas pump" language. components/Meter.tsx shows pump-style digits with the unused zeros dimmed. index.css has .panel/.pump/.field/.btn-gas/.btn-line primitives. Checkout and stats use a pump faceplate (sale, gas, refund, you spend). Landing has an itemised checkout and a how-it-works flow line. Phones get a bottom tab bar, and MotionConfig reducedMotion="user" wraps the app. Checkout now prices gas at the live eth_gasPrice (the old 1e14 constant overstated it ~5,000×).
 - Fixes: DeployPage now uses wagmi useDeployContract (the old writeContract call with no address could never deploy) and derives the address from the receipt. usePaidEvents is typed with GetLogsReturnType. The "Try a $0.10 checkout" CTA no longer links /pay/<contract address>; it uses VITE_DEMO_MERCHANT and is hidden when that's unset.
 - Deploy: a `build` script in package.json, plus vercel.json with an SPA rewrite. It is live at https://gasback-coral.vercel.app.
-- Env: VITE_NETWORK (testnet|mainnet), VITE_GASBACK_MAINNET, VITE_DEMO_MERCHANT. Please add a .env.example documenting these three; I couldn't upload one.
+- Env: VITE_NETWORK (testnet|mainnet), VITE_GASBACK_MAINNET, VITE_GASBACK_MAINNET_BLOCK, VITE_DEMO_MERCHANT.
 
-Do:
-1. `bun install`, then run typecheck, lint and build, and the forge tests. Report the results.
-2. Send a REAL testnet flow against 0xc0ad33f01758f9d0e15f4dc4c8ddfbc998477df0: register a merchant, fund $0.50, then pay() $0.10 from a second wallet. Report gasUsed × effectiveGasPrice vs the rebate, the % deviation, and the tx hashes. Do not redeploy.
-3. Make sure the preview runs with the new hero.
+- Network: production now runs on Arc MAINNET (VITE_NETWORK=mainnet) against 0x6389e393197d575f0cf737f3d063b9f6eefc8202 (deploy block 26928006, read from VITE_GASBACK_MAINNET_BLOCK). Testnet stays at 0xc0ad33f01758f9d0e15f4dc4c8ddfbc998477df0, where my local E2E passed 13/13.
+- Create .env.example (the CLI won't upload env files) with exactly:
+  VITE_NETWORK=mainnet
+  VITE_GASBACK_MAINNET=0x6389e393197d575f0cf737f3d063b9f6eefc8202
+  VITE_GASBACK_MAINNET_BLOCK=26928006
+  VITE_DEMO_MERCHANT=   (empty hides the landing CTA)
+
+Do (keep this turn short, my usage is limited):
+1. Accept the uploaded files as-is. `bun install`, then typecheck and build. Report pass/fail in a few lines.
+2. Fix only real build or type errors. No redesign, no redeploy, no on-chain transactions.

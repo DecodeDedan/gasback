@@ -1,0 +1,81 @@
+# CI on every push and PR; production deploy to Vercel (crypt/gasback) when main is green.
+# The Vercel project's root is app/, so every job runs there. Needs one repo secret: VERCEL_TOKEN.
+name: CI and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: app
+
+env:
+  BUN_VERSION: 1.4.2
+  VERCEL_CLI: vercel@65.1.0
+  # Not secrets: the same IDs are in app/.vercel/project.json. The token is the only credential.
+  VERCEL_ORG_ID: team_3PmU4Fn3pNY89UrsF0aOH41s
+  VERCEL_PROJECT_ID: prj_lJyJAd4h7QUhfKtVED51YEG4TThv
+
+jobs:
+  app:
+    name: App (lint, types, tests, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      # `bun run lint` passes --fix, which would hide errors in CI, so lint without it.
+      - run: bunx oxlint --type-aware src scripts && bunx oxlint .
+      - run: bun test src
+      - run: bun run build
+
+  contracts:
+    name: Contracts (forge test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      # OpenZeppelin comes from node_modules (remappings.txt); forge-std is not vendored in the repo.
+      - run: bun install --frozen-lockfile
+      - uses: foundry-rs/foundry-toolchain@v1
+      - run: forge install --no-git foundry-rs/forge-std@v1.17.0
+      - run: forge test -vv
+
+  deploy:
+    name: Deploy to Vercel (production)
+    # The contract is already on mainnet and immutable, so only the app gates the deploy.
+    needs: app
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: vercel-production
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://gasback-coral.vercel.app
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - name: Pull production settings and env
+        run: bunx ${{ env.VERCEL_CLI }} pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
+        run: bunx ${{ env.VERCEL_CLI }} build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy
+        run: bunx ${{ env.VERCEL_CLI }} deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

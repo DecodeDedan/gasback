@@ -4,7 +4,7 @@ import { useAccount, useWaitForTransactionReceipt } from 'wagmi';
 import { erc20Abi, decodeEventLog } from 'viem';
 import { ConnectKitButton } from 'connectkit';
 import { motion, useReducedMotion } from 'framer-motion';
-import { CheckCircle, ExternalLink, AlertTriangle, Receipt } from 'lucide-react';
+import { CheckCircle, ExternalLink, AlertTriangle } from 'lucide-react';
 import { NETWORK } from '@/gasback-config';
 import { usePreparedWrite } from '@/hooks/usePreparedWrite';
 import { GASBACK_ABI } from '@/gasback-abi';
@@ -106,7 +106,7 @@ export function CheckoutPage() {
   const liveGasPrice = useLiveGasPrice();
   const { data: quotedRebate } = useQuoteRebate(merchantAddr, EST_PAY_GAS, liveGasPrice ?? 0n);
   const estGasCost = liveGasPrice != null ? gasCostToUsdc(EST_PAY_GAS, liveGasPrice) : null;
-  const rebate = (quotedRebate as bigint | undefined) ?? 0n;
+  const rebate = (quotedRebate) ?? 0n;
   const netCost = payAmount + (estGasCost ?? 0n) - rebate;
 
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);

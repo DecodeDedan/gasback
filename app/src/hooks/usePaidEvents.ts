@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createPublicClient, parseAbiItem, type GetLogsReturnType } from 'viem';
 import { NETWORK, rpcTransport } from '@/gasback-config';
 
@@ -105,7 +105,7 @@ async function runBackfill(merchantFilter?: `0x${string}`) {
     while (from <= head) {
       const to = from + PAGE_SIZE - 1n < head ? from + PAGE_SIZE - 1n : head;
       const logs = await client.getLogs({
-        address: NETWORK.gasbackAddress as `0x${string}`,
+        address: NETWORK.gasbackAddress,
         event: PAID_EVENT_ABI,
         args: merchantFilter ? { merchant: merchantFilter } : undefined,
         fromBlock: from,
@@ -141,7 +141,7 @@ async function pollTip() {
     const from = cache.cacheHead + 1n;
     const to = head;
     const logs = await client.getLogs({
-      address: NETWORK.gasbackAddress as `0x${string}`,
+      address: NETWORK.gasbackAddress,
       event: PAID_EVENT_ABI,
       fromBlock: from,
       toBlock: to,

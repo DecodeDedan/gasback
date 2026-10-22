@@ -16,3 +16,6 @@ video/.hyperframes/
 *.webm
 ruvector.db
 video/
+.claude-flow/
+.vercel
+.env*

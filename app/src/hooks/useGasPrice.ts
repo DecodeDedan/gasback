@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPublicClient } from 'viem';
-import { NETWORK, rpcTransport } from '@/gasback-config';
+import { rpcTransport } from '@/gasback-config';
 
 /**
  * Polls eth_gasPrice every 15 s and returns the live value in wei.

@@ -77,7 +77,7 @@ check('fund pool', state[0] === poolBefore + 500_000n, `pool ${usd(poolBefore)} 
 const AMOUNT = 100_000n;
 await send(buyer, { address: USDC, abi: erc20Abi, functionName: 'approve', args: [GASBACK, AMOUNT] });
 const [mUsdBefore, bUsdBefore, bNativeBefore] = await Promise.all([bal(merchant.address), bal(buyer.address), pub.getBalance({ address: buyer.address })]);
-const orderRef = `0x${Buffer.from('e2e-order-1'.padEnd(32, '\0')).toString('hex')}` as Hex;
+const orderRef = `0x${Buffer.from('e2e-order-1'.padEnd(32, '\0')).toString('hex')}`;
 const payReceipt = await send(buyer, { address: GASBACK, abi: GASBACK_ABI, functionName: 'pay', args: [merchant.address, AMOUNT, orderRef] });
 const paid = payReceipt.logs
   .filter((l) => l.address.toLowerCase() === GASBACK)
